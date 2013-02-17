@@ -11,22 +11,21 @@ using namespace std;
 
 void reverse(char *str)
 {
-	int len = strlen(str);
-	char t;
-	
-	if (len == 0)
-		return;
-		
-	for (int i = 0; i <= len / 2; i++) 
-		swap(str[i], str[len - i - 1]); 
+    int len = strlen(str);
+    
+    if (len == 0)
+        return;
+        
+    for (int i = 0; i <= len / 2; i++) 
+        swap(str[i], str[len - i - 1]); 
 }
 
 int main()
 {
-	char test[] = "hello world!!!";
-	reverse(test);
-	cout << test << endl;
-	
-	return 0;
+    char test[] = "hello world!!!";
+    reverse(test);
+    cout << test << endl;
+    
+    return 0;
 }
 
