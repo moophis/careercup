@@ -45,7 +45,6 @@ void replace_string(char *str)
     // nlen = length of the extended string
     int len, nlen; 
     int space_num = 0;
-    bool endstr = false;
     
     len = strlen(str);
     /* 
