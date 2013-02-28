@@ -172,15 +172,78 @@ void delete_mid(node* &head, node* &tail)
 #endif
     posterior->next = middle->next;
 }
- 
+
+/**
+ * careercup 2.4
+ * Write code to partition a linked list around a value x, 
+ * such that all nodes less than x come before all nodes 
+ * greater than or equal to x.
+ *
+ * Method: Use a pointer called middle to divide the list
+ * into three parts: (<x) nodes, (=x) nodes and (>x) nodes.
+ * For each iteration, move current nodes to the right place.
+ * (Should be careful about edge conditions.)
+ */
+void list_partition(int x, node* &head, node* &tail)
+{
+    node *current, *temp, *middle;
+    /* to make sure that middle always points to 
+       the rightmost (<x) node for the most recent
+       iteration */
+    bool swapped_less_once = false; 
+    
+    current = middle = head;
+    
+    assert(x >= 0);
+    if ( head->next == tail ) {
+        cerr << "Empty linked list!" << endl;
+        return;
+    }
+    
+    while ( current->next != tail ) {
+        if ( current->next->data < x ) { 
+            // put (<x) node right after the head           
+            if ( current == head ) {
+                swapped_less_once = true;
+                middle = current->next;
+                current = current->next;
+                continue;
+            }
+            temp = current->next;
+            current->next = temp->next;
+            temp->next = head->next;
+            head->next = temp;
+            if ( !swapped_less_once ) {
+                swapped_less_once = true;
+                middle = temp; // rightmost (<x) node so far
+            }
+        } else if ( current->next->data == x ) { 
+            // put (=x) node right before the last (<x) node so far
+            if ( current == head ) {
+                current = current->next;
+                continue;
+            }
+            if ( current == middle ) {  // no need to swap
+                current = current->next;
+                continue;
+            }
+            temp = current->next;
+            current->next = temp->next;
+            temp->next = middle->next;
+            middle->next = temp;
+        } else
+            current = current->next;
+    }
+}
+
 int main()
 {
-    int arr[5] = {1, 2, 3, 4, 5};
+    int arr[5] = {5, 4, 3, 2, 5};
     node *head, *tail;
     
     array_to_list(arr, 5, head, tail);
     show_list(head, tail);
-    
+#if 0    
     // for 2.2: expect 3, 1->2->(3)->4->5
     cout << "----2.2 results----" << endl;
     cout << kth_to_last(2, head, tail)->data << endl;
@@ -189,5 +252,11 @@ int main()
     cout << "----2.3 results----" << endl;
     delete_mid(head, tail);
     show_list(head, tail);
+#endif  
+    // for 2.4
+    cout << "----2.4 results----" << endl;
+    list_partition(5, head, tail);
+    show_list(head, tail);
+    
     return 0;
 }
