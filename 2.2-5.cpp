@@ -1,9 +1,10 @@
 /**
- * This file include:
- * careercup 2.2 2.3
+ * This file includes:
+ * careercup 2.2 2.3 2.4 2.5
  */
 #include <iostream>
 #include <cassert>
+#include <stack>
 
 using namespace std;
 
@@ -236,13 +237,137 @@ void list_partition(int x, node* &head, node* &tail)
     }
 }
 
+/**
+ * careercup 2.5
+ * You have two numbers represented by a linked list, where each node 
+ * contains a single digit. The digits are stored in reverse order, 
+ * such that the 1's digit is at the head of the list. Write a function 
+ * that adds the two numbers and returns the sum as a linked list.
+ * EXAMPLE
+ * Input: (7 -> 1 -> 6) + (5 -> 9 -> 2). That is, 617 + 295
+ * Output: 2 -> 1 -> 9. That is, 912.
+ * FOLLOW UP
+ * Suppose the digits are stored in forward order. Repeat the above problem.
+ * EXAMPLE
+ * Input: (6 -> 1 -> 7) + (2 -> 9 -> 5). That is, 617 + 295.
+ * Output: 9 -> 1 -> 2. That is, 912.
+ *
+ */
+ /**
+  * For digits in reverse order: just add each bit from low to high.
+  * Should only take care of carry bit.
+  */
+void reverse_sum(node* &head1, node* &tail1, node* &head2, node* &tail2)
+{
+	node *current1 = head1->next, *current2 = head2->next;
+	node *sum_head, *sum_tail;
+	int carry = 0, thisbit = 0;
+	
+	init_list(sum_head, sum_tail);
+	
+	// first, deal with the common length parts of two lists
+	while ( current1 != tail1 && current2 != tail2 ) {
+		thisbit = current1->data + current2->data + carry;
+		carry = thisbit / 10;
+		thisbit = thisbit % 10;
+		add_node(thisbit, sum_head, sum_tail);
+		
+		current1 = current1->next;
+		current2 = current2->next;
+	}
+	
+	// then deal with extra length (if has) of one list
+	if ( current1 == tail1 ) {
+		while ( current2 != tail2 ) {
+			thisbit = current2->data + carry;
+			carry = thisbit / 10;
+			thisbit = thisbit % 10;
+			add_node(thisbit, sum_head, sum_tail);
+			
+			current2 = current2->next;
+		}
+	} else if ( current2 == tail2 ) {
+		while ( current1 != tail1 ) {
+			thisbit = current1->data + carry;
+			carry = thisbit / 10;
+			thisbit = thisbit % 10;
+			add_node(thisbit, sum_head, sum_tail);
+			
+			current1 = current1->next;
+		}
+	}
+	if ( carry != 0 ) 
+		add_node(carry, sum_head, sum_tail);
+		
+	// show results
+	show_list(sum_head, sum_tail);
+}
+
+/**
+ * For digits in forward order: use two stacks to make digits 
+ * in reverse order.
+ */
+void forward_sum(node* &head1, node* &tail1, node* &head2, node* &tail2)
+{
+	stack<int> s1, s2, sum;
+	node *current1 = head1->next, *current2 = head2->next;
+	node *sum_head, *sum_tail;
+	int carry = 0, thisbit = 0;
+	
+	init_list(sum_head, sum_tail);
+
+	for ( ;current1 != tail1; current1 = current1->next) 
+		s1.push(current1->data);
+	for ( ;current2 != tail2; current2 = current2->next)
+		s2.push(current2->data);
+
+	while ( !s1.empty() && !s2.empty() ) {
+		thisbit = s1.top() + s2.top() + carry;
+		carry = thisbit / 10;
+		thisbit = thisbit % 10;
+		add_node(thisbit, sum_head, sum_tail);
+		
+		s1.pop(); 
+		s2.pop();
+	}
+	
+	if ( s1.empty() ) {
+		while ( !s2.empty() ) {
+			thisbit = s2.top() + carry;
+			carry = thisbit / 10;
+			thisbit = thisbit % 10;
+			sum.push(thisbit);
+			
+			s2.pop();
+		}
+	} else if ( s2.empty() ) {
+		while ( !s1.empty() ) {
+			thisbit = s1.top() + carry;
+			carry = thisbit / 10;
+			thisbit = thisbit % 10;
+			sum.push(thisbit);
+			
+			s1.pop();
+		}
+	}
+	
+	if ( carry != 0 ) 
+		sum.push(carry);
+		
+	while ( !sum.empty() ) {
+		add_node(sum.top(), sum_head, sum_tail);
+		sum.pop();
+	}
+	show_list(sum_head, sum_tail);
+}
+
 int main()
 {
     int arr[5] = {5, 4, 3, 2, 5};
     node *head, *tail;
     
     array_to_list(arr, 5, head, tail);
-    show_list(head, tail);
+    //show_list(head, tail);
 #if 0    
     // for 2.2: expect 3, 1->2->(3)->4->5
     cout << "----2.2 results----" << endl;
@@ -252,11 +377,22 @@ int main()
     cout << "----2.3 results----" << endl;
     delete_mid(head, tail);
     show_list(head, tail);
-#endif  
+  
     // for 2.4
     cout << "----2.4 results----" << endl;
     list_partition(5, head, tail);
     show_list(head, tail);
-    
+#endif
+	// for 2.5
+	cout << "----2.5 results----" << endl;
+	int fst[5] = {5, 9, 3, 9, 9};
+	int sec[3] = {7, 1, 6};
+	node *head1, *head2, *tail1, *tail2;
+	
+	array_to_list(fst, 5, head1, tail1);
+	array_to_list(sec, 3, head2, tail2);
+	reverse_sum(head1, tail1, head2, tail2);
+	forward_sum(head1, tail1, head2, tail2);
+	
     return 0;
 }
