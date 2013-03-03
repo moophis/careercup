@@ -1,6 +1,6 @@
 /**
  * This file includes:
- * careercup 2.2 2.3 2.4 2.5
+ * careercup 2.2 2.3 2.4 2.5 2.6 2.7
  */
 #include <iostream>
 #include <cassert>
@@ -406,13 +406,42 @@ node* detect_circle(node* &head, node* &tail)
     return NULL;
 }
 
+/**
+ * careercup 2.7
+ * Implement a function to check if a linked list is a palindrome.
+ * 
+ * Method: Use a stack. First travel through the lists while storing
+ * them into a stack. Then go back to the head and travel through again
+ * while popping the value from the stack to check whether the value is 
+ * same with current node value.
+ */
+bool palindrome(node* &head, node* &tail)
+{
+    stack<int> s;
+    node* current = head->next;
+    
+    if ( current == tail ) 
+        return false;
+    
+    for ( ;current != tail; current = current->next) 
+        s.push(current->data);
+    current = head->next;
+    for ( ;current != tail; current = current->next) {
+        if ( s.top() != current->data )
+            return false;
+        s.pop();
+    }
+    
+    return true;
+}
+ 
 int main()
 {
-    int arr[5] = {5, 4, 3, 2, 5};
+    int arr[5] = {5, 4, 3, 4, 5};
     node *head, *tail, *current;
     
     array_to_list(arr, 5, head, tail);
-    //show_list(head, tail);
+    show_list(head, tail);
 #if 0    
     // for 2.2: expect 3, 1->2->(3)->4->5
     cout << "----2.2 results----" << endl;
@@ -438,7 +467,7 @@ int main()
     array_to_list(sec, 3, head2, tail2);
     reverse_sum(head1, tail1, head2, tail2);
     forward_sum(head1, tail1, head2, tail2);
-#endif
+
     // for 2.6
     cout << "----2.6 results----" << endl;
     // make a loop
@@ -452,6 +481,10 @@ int main()
         cout << "No loop detected!" << endl;
     else
         cout << "The entry of the loop: " << result->data << endl;
-   
+#endif
+    // for 2.7
+    cout << "----2.7 results----" << endl;
+    cout << "Is palindrome? " << palindrome(head, tail) << endl;
+  
     return 0;
 }
