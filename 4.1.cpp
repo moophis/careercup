@@ -8,6 +8,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include <vector>
 
 using namespace std;
 
@@ -43,6 +44,54 @@ bool balanced(treenode *current, int &max_height)
     return last_balance && abs(left_height - right_height) <= 1;
 }
 
+/*
+ * Method: A non-recursive way which for each iteration harness 
+ * a vector to store each node while counting minimum height of
+ * the tree. 
+ */
+bool balanced_nr(treenode *root)
+{
+    int min_height = 65536, max_height = 0;
+    // vector of pointers to each node in the same depth.
+    vector<treenode *> thislevel;
+    bool no_child = false;
+    
+    if ( !root )
+        return true;
+		
+    thislevel.push_back(root);
+    for (int cur_height = 0; !no_child; cur_height++) {
+        int cur_size = thislevel.size();
+        no_child = true;
+        
+        for (int i = 0; i < cur_size; i++) {
+            treenode *cur_node = thislevel[i];
+    
+            if ( !cur_node->left && !cur_node->right ) {
+                thislevel.erase(thislevel.begin() + i);
+                min_height = min(min_height, cur_height);
+                cur_size--;
+                i--;
+            } else {
+                no_child = false;
+                if ( cur_node->left ) 
+                    thislevel[i] = cur_node->left;
+                if ( cur_node->right && cur_node->left ) 
+                    thislevel.push_back(cur_node->right);
+                else 
+                    thislevel[i] = cur_node->right;
+            }
+            
+            //min_height = min(min_height, cur_height);
+            max_height = cur_height;
+            if ( max_height - min_height > 1 )
+                return false;
+        }
+    }
+    
+    return max_height - min_height <= 1;
+}
+
 int main()
 {
     int height;
@@ -65,11 +114,16 @@ int main()
     tree[2].right = &tree[4];
     tree[3].left  = tree[3].right = NULL;
     tree[4].left  = NULL;
-    tree[4].right = &tree[5];
+    tree[4].right = &tree[5];;
     tree[5].left  = tree[5].right = NULL;
     
     cout << "This tree is ";
     if ( !balanced(&tree[0], height) )
+        cout << "not ";
+    cout << "a balanced tree!" << endl;
+    
+    cout << "This tree is ";
+    if ( !balanced_nr(&tree[0]) )
         cout << "not ";
     cout << "a balanced tree!" << endl;
     
