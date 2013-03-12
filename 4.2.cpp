@@ -14,6 +14,7 @@ using namespace std;
  */
 typedef struct _gnode {
     int index;
+    bool visited;
     vector<_gnode *> adj;
 }gnode;
 
@@ -44,21 +45,60 @@ bool bfs(gnode* &src, gnode* &dst)
     return false;
 }
 
+/*
+ * Method: using depth-first search.
+ */
+bool dfs_visit(gnode* &src, gnode* &dst)
+{
+    bool retval;
+    
+    src->visited = true;
+    for (int i = 0; i < src->adj.size(); i++) {
+        if ( src->adj[i] == dst )
+            return true;
+        if ( !src->adj[i]->visited ) {
+            //cout << "Next hop: " << src->adj[i]->index << endl;
+            retval = dfs_visit(src->adj[i], dst);
+        }
+    }
+    
+    return retval;
+}
+
+/*
+ * @graph: the input graph;
+ * @gnode_size: number of nodes in the graph.
+ */
+bool dfs(gnode* &src, gnode* &dst, gnode** graph, int gnode_size)
+{
+    for (int i = 0; i < gnode_size; i++) {
+        graph[i]->visited = false;
+    }
+    
+    src->visited = true;
+    return dfs_visit(src, dst);
+}
+
 int main()
 {
     gnode **mygraph;
+    const int gnum = 7;
     
-    mygraph = new gnode* [5];
-    for (int i = 0; i < 5; i++) {
+    mygraph = new gnode* [gnum];
+    for (int i = 0; i < gnum; i++) {
         mygraph[i] = new gnode;
         mygraph[i]->index = i;
     }
     mygraph[0]->adj.push_back(mygraph[1]);
     mygraph[0]->adj.push_back(mygraph[2]);
     mygraph[1]->adj.push_back(mygraph[3]);
-    //mygraph[3]->adj.push_back(mygraph[4]);
+    mygraph[3]->adj.push_back(mygraph[4]);
+    mygraph[2]->adj.push_back(mygraph[4]);
+    mygraph[2]->adj.push_back(mygraph[5]);
+    mygraph[5]->adj.push_back(mygraph[6]);
     
-    cout << bfs(mygraph[0], mygraph[4]) << endl;
+    cout << bfs(mygraph[0], mygraph[6]) << endl;
+    cout << dfs(mygraph[0], mygraph[6], mygraph, gnum) << endl;
     
     return 0;
 }
