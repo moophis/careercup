@@ -57,7 +57,7 @@ bool dfs_visit(gnode* &src, gnode* &dst)
         if ( src->adj[i] == dst )
             return true;
         if ( !src->adj[i]->visited ) {
-            //cout << "Next hop: " << src->adj[i]->index << endl;
+            cout << "Next hop: " << src->adj[i]->index << endl;
             retval = dfs_visit(src->adj[i], dst);
         }
     }
@@ -95,10 +95,10 @@ int main()
     mygraph[3]->adj.push_back(mygraph[4]);
     mygraph[2]->adj.push_back(mygraph[4]);
     mygraph[2]->adj.push_back(mygraph[5]);
-    mygraph[5]->adj.push_back(mygraph[6]);
+    mygraph[2]->adj.push_back(mygraph[6]);
     
-    cout << bfs(mygraph[0], mygraph[6]) << endl;
-    cout << dfs(mygraph[0], mygraph[6], mygraph, gnum) << endl;
+    cout << bfs(mygraph[0], mygraph[5]) << endl;
+    cout << dfs(mygraph[0], mygraph[5], mygraph, gnum) << endl;
     
     return 0;
 }
