@@ -50,7 +50,7 @@ bool bfs(gnode* &src, gnode* &dst)
  */
 bool dfs_visit(gnode* &src, gnode* &dst)
 {
-    bool retval;
+    bool retval = false;
     
     src->visited = true;
     for (int i = 0; i < src->adj.size(); i++) {
