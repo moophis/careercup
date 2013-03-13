@@ -5,6 +5,7 @@
  */
 #include <iostream>
 #include <queue>
+#include <cassert>
 
 using namespace std;
 
@@ -24,6 +25,7 @@ typedef struct _treenode {
 void insert_node(int arr[], treenode* &root, int begin, int end)
 {
     int mid = (end - begin) / 2 + begin;
+    assert(begin >= end);
     
     root = new treenode;
     root->val   = arr[mid];
