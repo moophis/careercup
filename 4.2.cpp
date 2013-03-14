@@ -21,23 +21,34 @@ typedef struct _gnode {
 /*
  * Method: using breadth-first search.
  * Input: @src: pointer to source node;
- *        @dst: pointer to destination node.
+ *        @dst: pointer to destination node;
+ *        @graph: the current graph to be dealt;
+ *        @gnode_size: # of nodes in the graph.
  * Output: whether there is a route between 
  *         two nodes.
  */
-bool bfs(gnode* &src, gnode* &dst)
+bool bfs(gnode* &src, gnode* &dst, gnode** graph, int gnode_size)
 {
     queue<gnode *> buf;
     
-    buf.push(src);
+    for (int i = 0; i < gnode_size; i++) {
+        graph[i]->visited = false;
+    }
     
+    buf.push(src);
     while ( !buf.empty() ) {
+        // should really be careful about loop!
+        buf.front()->visited = true; 
         gnode *next = buf.front();
         buf.pop();
         
         for (int i = 0; i < next->adj.size(); i++) {
             if ( next->adj[i] == dst )
                 return true;
+            // avoid revisiting the same node
+            if ( next->adj[i]->visited )
+                continue;
+            next->adj[i]->visited = true;
             buf.push(next->adj[i]);
         }
     }
@@ -97,7 +108,7 @@ int main()
     mygraph[2]->adj.push_back(mygraph[5]);
     mygraph[2]->adj.push_back(mygraph[6]);
     
-    cout << bfs(mygraph[0], mygraph[5]) << endl;
+    cout << bfs(mygraph[0], mygraph[5], mygraph, gnum) << endl;
     cout << dfs(mygraph[0], mygraph[5], mygraph, gnum) << endl;
     
     return 0;
