@@ -14,6 +14,14 @@ typedef struct _treenode {
     _treenode *left, *right, *parent;
 }treenode;
 
+/*
+ * Method: Two scenarios:
+ *         1) This node has right child: go to the right child,
+ *            then iteratively go to the left child until we 
+ *            meet null. Return this leftmost node;
+ *         2) This node doesn't has right child: also divided
+ *            by two cases stated in the code. 
+ */
 treenode *find_next(treenode *now)
 {
     treenode *next = now;
@@ -24,6 +32,8 @@ treenode *find_next(treenode *now)
     if (!next->right) {
         if (!next->parent) // root
             return NULL;
+        /* The node is the left child of its parent, 
+           so its parent is the next hop */
         if (next->parent->left && next->parent->left == next)
             return next->parent;
             
@@ -32,7 +42,7 @@ treenode *find_next(treenode *now)
            to the parent node until find a parent node  
            which is on the right of the "now" node. 
            If there is no such a parent node, that means
-           the "now" node this the last node. Remember that
+           the "now" node is the last node. Remember that
            the parent of root node is NULL, so returning 
            next->...->parent is just fine */
         while (next->parent && next->parent->right 
