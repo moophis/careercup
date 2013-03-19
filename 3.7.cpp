@@ -41,6 +41,9 @@ public:
      */
     animal dequeue_any()
     {
+        if ( aslist.size() == 0 )
+            return None;
+            
         animal retval = aslist.front();
         aslist.pop_front();
         
